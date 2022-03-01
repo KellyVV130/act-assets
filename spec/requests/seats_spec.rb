@@ -7,11 +7,11 @@ RSpec.describe 'Seats API' , type: :request do
   let(:room_id) { room.id }
   let(:seat_id) { seats.first.id }
 
-  # Test suite for GET /rooms/:room_id/seats
-  describe 'GET /rooms/:room_id/seats' do
-    before { get "/rooms/#{room_id}/seats" }
+  # Test suite for GET /seats
+  describe 'GET /seats' do
+    before { get "/seats" }
 
-    context 'when room exists' do
+    context 'should return all seats' do
       it 'returns status code 200' do
         expect(response).to have_http_status(200)
       end
@@ -20,25 +20,13 @@ RSpec.describe 'Seats API' , type: :request do
         expect(json.size).to eq(20)
       end
     end
-
-    context 'when room does not exist' do
-      let(:room_id) { 0 }
-
-      it 'returns status code 404' do
-        expect(response).to have_http_status(404)
-      end
-
-      it 'returns a not found message' do
-        expect(response.body).to match(/Couldn't find Room/)
-      end
-    end
   end
 
-  # Test suite for GET /rooms/:room_id/seats/:id
-  describe 'GET /rooms/:room_id/seats/:id' do
-    before { get "/rooms/#{room_id}/seats/#{seat_id}" }
+  # Test suite for GET /seats/:id
+  describe 'GET /seats/:id' do
+    before { get "/seats/#{seat_id}" }
 
-    context 'when room seat exists' do
+    context 'when seat exists' do
       it 'returns status code 200' do
         expect(response).to have_http_status(200)
       end
@@ -48,7 +36,7 @@ RSpec.describe 'Seats API' , type: :request do
       end
     end
 
-    context 'when room seat does not exist' do
+    context 'when seat does not exist' do
       let(:seat_id) { 0 }
 
       it 'returns status code 404' do
@@ -61,12 +49,12 @@ RSpec.describe 'Seats API' , type: :request do
     end
   end
 
-  # Test suite for PUT /rooms/:room_id/seats
-  describe 'POST /rooms/:room_id/seats' do
-    let(:valid_attributes) { { name: 'Visit Narnia', top: 10, left: 11, right: 12, bottom: 13 } }
+  # Test suite for POST /seats
+  describe 'POST /seats' do
+    let(:valid_attributes) { { name: 'Visit Narnia', top: 10, left: 11, right: 12, bottom: 13, room_id: 1 } }
 
     context 'when request attributes are valid' do
-      before { post "/rooms/#{room_id}/seats", params: valid_attributes }
+      before { post "/seats", params: valid_attributes }
 
       it 'returns status code 201' do
         expect(response).to have_http_status(201)
@@ -74,23 +62,23 @@ RSpec.describe 'Seats API' , type: :request do
     end
 
     context 'when an invalid request' do
-      before { post "/rooms/#{room_id}/seats", params: {} }
+      before { post "/seats", params: {} }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
       end
 
       it 'returns a failure message' do
-        expect(response.body).to match(/Validation failed: Name can't be blank/)
+        expect(response.body).to match(/Validation failed: Room must exist/)
       end
     end
   end
 
   # Test suite for PUT /rooms/:room_id/seats/:id
-  describe 'PUT /rooms/:room_id/seats/:id' do
+  describe 'PUT /seats/:id' do
     let(:valid_attributes) { { name: 'Mozart' } }
 
-    before { put "/rooms/#{room_id}/seats/#{seat_id}", params: valid_attributes }
+    before { put "/seats/#{seat_id}", params: valid_attributes }
 
     context 'when seat exists' do
       it 'returns status code 204' do
@@ -116,9 +104,9 @@ RSpec.describe 'Seats API' , type: :request do
     end
   end
 
-  # Test suite for DELETE /rooms/:id
-  describe 'DELETE /rooms/:id' do
-    before { delete "/rooms/#{room_id}/seats/#{seat_id}" }
+  # Test suite for DELETE /seats/:id
+  describe 'DELETE /seats/:id' do
+    before { delete "/seats/#{seat_id}" }
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)

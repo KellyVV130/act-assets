@@ -1,30 +1,30 @@
 class SeatsController < ApplicationController
-  before_action :set_room
   before_action :set_room_seat, only: [:show, :update, :destroy]
 
-  # GET /rooms/:room_id/seats
+  # GET /seats
   def index
-    json_response(@room.seats)
+    @seats = Seat.all.order :room_id
+    json_response(@seats)
   end
 
-  # GET /rooms/:room_id/seats/:id
+  # GET /seats/:id
   def show
     json_response(@seat)
   end
 
-  # POST /rooms/:room_id/seats
+  # POST /seats
   def create
-    @room.seats.create!(seat_params) # 这种方式让room_id也更新了
-    json_response(@room, :created)
+    @seat = Seat.create!(seat_params)
+    json_response(@seat, :created)
   end
 
-  # PUT /rooms/:room_id/seats/:id
+  # PUT /seats/:id
   def update
     @seat.update(seat_params)
     head :no_content
   end
 
-  # DELETE /rooms/:room_id/seats/:id
+  # DELETE /seats/:id
   def destroy
     @seat.destroy
     head :no_content
@@ -33,14 +33,10 @@ class SeatsController < ApplicationController
   private
 
   def seat_params
-    params.permit(:name, :top, :left, :right, :bottom)
-  end
-
-  def set_room
-    @room = Room.find(params[:room_id])
+    params.permit(:name, :room_id, :top, :left, :right, :bottom)
   end
 
   def set_room_seat
-    @seat = @room.seats.find_by!(id: params[:id]) if @room # TODO: has_many可以当作属性来访问？
+    @seat = Seat.find(params[:id])
   end
 end

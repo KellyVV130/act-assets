@@ -4,6 +4,7 @@ RSpec.describe Seat, type: :model do
   # Association test
   # 确保一个座位在一个房间里
   it { should belong_to(:room) }
+  it { should have_and_belong_to_many(:users) }
   # Validation test
   it { should validate_presence_of(:name) }
   it { should validate_presence_of(:top) }
